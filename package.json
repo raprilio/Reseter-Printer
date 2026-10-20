@@ -1,0 +1,9 @@
+{
+  "name": "reseter-printer-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080 --directory web",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

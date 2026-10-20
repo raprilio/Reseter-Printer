@@ -1,0 +1,29 @@
+{
+  "name": "CONTOH skema — bukan profil printer nyata",
+  "match": { "model": "EXAMPLE-DO-NOT-USE" },
+  "verified": false,
+  "inks": ["K", "C", "M", "Y"],
+  "ops": {
+    "readCounters": {
+      "label": "Baca counter waste ink",
+      "write": false,
+      "steps": [
+        { "send": "hex:00 00" },
+        { "read": true, "timeoutMs": 1500 }
+      ],
+      "parse": {
+        "counters": [
+          { "label": "Main pad", "offset": 0, "length": 2, "endian": "le", "max": 5500 }
+        ]
+      }
+    },
+    "resetWaste": {
+      "label": "Reset waste ink counter",
+      "write": true,
+      "steps": [
+        { "send": "hex:00 00" },
+        { "read": true, "timeoutMs": 1500, "expectHex": "00" }
+      ]
+    }
+  }
+}

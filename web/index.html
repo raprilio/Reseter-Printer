@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reseter Printer Web</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>Reseter Printer Web</h1>
+      <p>Epson &amp; Canon &middot; WebUSB</p>
+    </div>
+    <div class="conn">
+      <span id="connState" class="pill off">Tidak terhubung</span>
+      <button id="btnConnect" class="primary">Hubungkan printer (USB)</button>
+      <button id="btnDemo">Mode Demo</button>
+      <button id="btnDisconnect" hidden>Putuskan</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main class="grid">
+    <section class="card" id="cardDevice">
+      <h2>Perangkat <small>auto detect</small></h2>
+      <dl id="deviceInfo" class="kv"><dt>Status</dt><dd>Belum ada printer terhubung.</dd></dl>
+    </section>
+
+    <section class="card" id="cardInk">
+      <h2>Status tinta</h2>
+      <div id="inkBars" class="bars empty">Belum dibaca.</div>
+      <div class="row">
+        <button id="btnInk" disabled>Baca status tinta</button>
+        <button id="btnCharge" disabled data-op="inkCharge">Ink charge</button>
+      </div>
+      <p class="hint" id="inkHint"></p>
+    </section>
+
+    <section class="card" id="cardWaste">
+      <h2>Waste ink / absorber</h2>
+      <div id="wasteBars" class="bars empty">Belum dibaca.</div>
+      <div id="wasteVerdict" class="verdict" hidden></div>
+      <div class="row">
+        <button id="btnCheckAbs" disabled data-op="readCounters">Cek absorber full</button>
+        <button id="btnReset" class="danger" disabled data-op="resetWaste">Reset waste ink counter</button>
+      </div>
+      <p class="hint" id="wasteHint"></p>
+    </section>
+
+    <section class="card" id="cardHead">
+      <h2>Head &amp; nozzle</h2>
+      <div class="row">
+        <button id="btnNozzle" disabled>Cek nozzle (cetak pola)</button>
+        <button id="btnClean" disabled>Pembersihan head</button>
+      </div>
+      <p class="hint" id="headHint">Epson: dikirim lewat remote command. Canon: gunakan menu Maintenance di driver atau tombol panel.</p>
+    </section>
+
+    <section class="card" id="cardProfile">
+      <h2>Profil model</h2>
+      <p id="profileState" class="hint">Tidak ada profil aktif.</p>
+      <div class="row">
+        <label class="file">Impor profil JSON<input type="file" id="fileProfile" accept="application/json,.json"></label>
+        <button id="btnClearProfiles">Hapus profil tersimpan</button>
+      </div>
+      <p class="hint">Operasi tulis (reset counter, ink charge) membutuhkan profil model. Lihat <code>profiles/README.md</code>.</p>
+    </section>
+
+    <section class="card wide" id="cardModels">
+      <h2>Daftar model</h2>
+      <div class="row">
+        <input id="modelSearch" type="search" placeholder="Cari model, mis. L3210 atau G1010">
+        <select id="modelBrand"><option value="">Semua merek</option><option value="epson">Epson</option><option value="canon">Canon</option></select>
+      </div>
+      <ul id="modelList" class="chips"></ul>
+    </section>
+
+    <section class="card wide" id="cardGuide">
+      <h2>Kode error &amp; panduan</h2>
+      <div id="guide" class="guide"></div>
+    </section>
+
+    <section class="card wide" id="cardLog">
+      <h2>Console</h2>
+      <div class="row">
+        <input id="rawHex" class="mono" placeholder="Kirim hex mentah, mis. 1B 40" spellcheck="false">
+        <button id="btnRaw" disabled>Kirim &amp; baca</button>
+        <label class="check"><input type="checkbox" id="optEjl"> Awalan EJL 1284.4</label>
+        <button id="btnClearLog">Bersihkan</button>
+      </div>
+      <pre id="log" class="log" aria-live="polite"></pre>
+    </section>
+  </main>
+
+  <dialog id="confirmDlg">
+    <form method="dialog">
+      <h3 id="dlgTitle"></h3>
+      <p id="dlgBody"></p>
+      <label>Ketik <b id="dlgWord"></b> untuk melanjutkan
+        <input id="dlgInput" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="row end">
+        <button value="cancel">Batal</button>
+        <button id="dlgOk" value="ok" class="danger" disabled>Lanjutkan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
