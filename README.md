@@ -33,6 +33,10 @@ Tes: `npm test`. Tidak ada dependensi dan tidak ada langkah build.
 - Reset counter tidak mengosongkan bantalan tinta fisik. Bantalan yang penuh bisa meluap dan merusak
   papan sirkuit. Bersihkan atau ganti bantalan sebelum reset.
 
+## Keamanan
+
+Aplikasi tidak punya kode jaringan, dan CSP memblokir koneksi keluar; hasil audit file referensi ada di [docs/SECURITY-AUDIT.md](docs/SECURITY-AUDIT.md).
+
 ## Struktur
 
 ```
