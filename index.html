@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reseter Printer Web</title>
+  <meta name="description" content="Utilitas web untuk printer Epson dan Canon: status tinta, cek head, dan counter absorber lewat WebUSB.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5fff'/%3E%3Cpath d='M9 12V7h14v5M9 22h14v-6H9z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-in">
+      <h1>Reseter Printer <span class="tag">Web</span></h1>
+      <p class="sub">Epson &amp; Canon lewat USB, langsung dari browser</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="compat" class="banner" hidden></section>
+
+    <section class="card" aria-labelledby="h-conn">
+      <h2 id="h-conn">1. Hubungkan printer</h2>
+      <div class="row">
+        <button id="btn-usb" class="primary">Hubungkan via USB</button>
+        <button id="btn-demo">Mode demo (simulasi)</button>
+        <button id="btn-disc" hidden>Putuskan</button>
+        <span id="conn-pill" class="pill off">Belum terhubung</span>
+      </div>
+      <div class="grid2">
+        <label>Merek
+          <select id="brand">
+            <option value="epson">Epson</option>
+            <option value="canon">Canon</option>
+          </select>
+        </label>
+        <label>Model
+          <input id="model" list="model-list" placeholder="mis. L3210 atau G1010" autocomplete="off">
+          <datalist id="model-list"></datalist>
+        </label>
+      </div>
+      <p id="detect-note" class="note"></p>
+      <dl id="devinfo" class="kv" hidden></dl>
+    </section>
+
+    <section class="card" aria-labelledby="h-feat">
+      <h2 id="h-feat">2. Fitur</h2>
+      <label class="check"><input type="checkbox" id="dry"> Mode uji (dry-run): tampilkan perintah tanpa mengirim ke printer</label>
+      <div id="features"></div>
+    </section>
+
+    <section class="card" aria-labelledby="h-prof">
+      <h2 id="h-prof">3. Profil model</h2>
+      <p class="note">Counter absorber, ink charge, dan power cleaning memakai urutan byte khusus tiap model. Urutan itu disimpan sebagai profil JSON, bukan dikode keras. Format: <code>profiles/README.md</code>.</p>
+      <div class="row">
+        <input type="file" id="prof-file" accept="application/json,.json">
+        <button id="prof-paste-btn">Impor dari teks</button>
+      </div>
+      <textarea id="prof-text" rows="4" placeholder="Tempel JSON profil di sini" spellcheck="false"></textarea>
+      <ul id="prof-list" class="plist"></ul>
+    </section>
+
+    <section class="card" aria-labelledby="h-raw">
+      <h2 id="h-raw">4. Terminal raw (lanjutan)</h2>
+      <p class="note">Kirim byte hex apa adanya. Berguna untuk menguji urutan perintah sebelum dijadikan profil. Perintah yang salah dapat mengubah memori printer.</p>
+      <div class="row">
+        <input id="raw-hex" class="grow mono" placeholder="1B 40 1B 28 52 08 00 00 52 45 4D 4F 54 45 31 ..." spellcheck="false">
+        <label class="check inline"><input type="checkbox" id="raw-read" checked> baca respons</label>
+        <button id="raw-send">Kirim</button>
+      </div>
+      <pre id="raw-out" class="out mono" hidden></pre>
+    </section>
+
+    <section class="card" aria-labelledby="h-log">
+      <h2 id="h-log">Log</h2>
+      <div class="row"><button id="log-dl">Unduh log</button><button id="log-clear">Bersihkan</button></div>
+      <pre id="log" class="log mono" aria-live="polite"></pre>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    Gunakan hanya pada printer milik sendiri. Reset counter tidak mengosongkan bantalan tinta yang sebenarnya.
+  </footer>
+
+  <dialog id="dlg">
+    <form method="dialog" id="dlg-form">
+      <h3 id="dlg-title"></h3>
+      <div id="dlg-body"></div>
+      <label class="check" id="dlg-ack-wrap" hidden><input type="checkbox" id="dlg-ack"> <span id="dlg-ack-text"></span></label>
+      <div class="row end">
+        <button value="cancel" id="dlg-cancel">Batal</button>
+        <button value="ok" id="dlg-ok" class="primary">Lanjutkan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
