@@ -1,5 +1,6 @@
 import { UsbTransport } from './usb.js';
 import { DemoTransport, demoProfiles } from './demo.js';
+import { BUILTIN_PROFILES } from './builtin-profiles.js';
 import { parseDeviceId, } from './ieee1284.js';
 import { MODELS, FEATURES, brandFromManufacturer, findModel, resolveFeature } from './models.js';
 import * as epson from './epson.js';
@@ -29,7 +30,11 @@ function log(msg) {
 }
 const brand = () => $('brand').value;
 const modelName = () => $('model').value.trim();
-const profiles = () => [...state.userProfiles, ...(state.transport?.kind === 'demo' ? demoProfiles() : [])];
+const profiles = () => [
+  ...BUILTIN_PROFILES,
+  ...state.userProfiles,
+  ...(state.transport?.kind === 'demo' ? demoProfiles() : []),
+];
 
 function ask({ title, body = [], ack = null, okLabel = 'Lanjutkan', danger = false }) {
   const dlg = $('dlg');
@@ -179,10 +184,16 @@ async function perform(feature) {
     if (res.level === 'experimental') {
       body.push(el('p', { className: 'note' }, 'Perintah ini eksperimental dan belum diuji pada printer nyata.'));
     }
+    const unverified = profile && !profile.verified && !profile.demo;
+    if (unverified) {
+      body.push(el('p', { className: 'note' }, `Profil "${profile.name}" belum terverifikasi pada printer nyata.`));
+    }
     if (dry()) body.push(el('p', { className: 'note' }, 'Dry-run aktif: tidak ada yang akan dikirim.'));
+    const ack = [action.ack, unverified && 'Saya paham profil ini belum diuji pada printer nyata.']
+      .filter(Boolean).join(' ') || null;
     const ok = await ask({
       title: `${action.label}: ${brand()} ${modelName()}`,
-      body, ack: action.ack, danger: !!action.danger, okLabel: action.label,
+      body, ack, danger: !!action.danger, okLabel: action.label,
     });
     if (!ok) return;
   }
@@ -247,7 +258,7 @@ function renderProfiles() {
   const all = profiles();
   if (!all.length) list.append(el('li', {}, 'Belum ada profil. Impor JSON untuk mengaktifkan reset absorber dan ink charge.'));
   for (const p of all) {
-    const del = el('button', { textContent: 'Hapus', hidden: !!p.demo });
+    const del = el('button', { textContent: 'Hapus', hidden: !!p.demo || BUILTIN_PROFILES.includes(p) });
     del.addEventListener('click', () => {
       state.userProfiles = state.userProfiles.filter((x) => x.id !== p.id);
       store.set('rp.profiles', state.userProfiles);

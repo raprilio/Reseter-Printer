@@ -1,7 +1,7 @@
 # Profil model
 
 Profil adalah file JSON yang berisi urutan byte khusus satu atau beberapa model printer. Aplikasi
-tidak membawa byte reset bawaan, karena byte yang salah dapat merusak printer. Profil diimpor lewat
+tidak membawa byte reset bawaan, karena byte yang salah dapat merusak printer. Satu profil bawaan ada di `js/builtin-profiles.js` (Canon iP1100/1800/2500). Profil Anda sendiri diimpor lewat
 panel **3. Profil model** dan disimpan di `localStorage` browser.
 
 ## Format (schema 1)

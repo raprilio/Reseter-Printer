@@ -14,7 +14,8 @@ Tes: `npm test`. Tidak ada dependensi dan tidak ada langkah build.
 | Status & level tinta | eksperimental (REMOTE1 `ST`/`IQ`) | hanya kode `STA` dari Device ID |
 | Cek head (nozzle check) | eksperimental (`NC`) | butuh profil |
 | Bersihkan head | eksperimental (`CH`) | butuh profil |
-| Power cleaning, cek absorber, reset absorber, ink charge | butuh profil | butuh profil |
+| Reset absorber | butuh profil | profil bawaan **hanya iP1100/iP1800/iP2500** (belum terverifikasi), model Canon lain butuh profil |
+| Power cleaning, cek absorber, ink charge | butuh profil | butuh profil |
 
 - **Bawaan**: protokol standar yang terdokumentasi.
 - **Eksperimental**: perintah berasal dari dokumentasi open source (escputil/Gutenprint) dan sudah diuji
@@ -22,6 +23,18 @@ Tes: `npm test`. Tidak ada dependensi dan tidak ada langkah build.
 - **Butuh profil**: byte perintah dan alamat counter berbeda per model dan tidak dikode keras di sini
   karena tidak ada sumber yang bisa diverifikasi (lihat [profiles/README.md](profiles/README.md)).
   Tanpa profil, tombol dinonaktifkan. Mode demo memperlihatkan alur lengkapnya dengan printer simulasi.
+
+### Profil bawaan Canon iP1100 / iP1800 / iP2500
+
+Berasal dari file `MainRewrite` dan `PlatenRewrite` di paket Canon General Tool (T3164) yang Anda sediakan:
+perintah BJL teks biasa (`ESC [ K ... BJLSTART ... BJLEND`). Batasannya:
+
+- **Belum diuji pada printer nyata**, jadi bertanda `verified: false` dan dialognya mewajibkan centang pengakuan.
+- Nama operasi diambil dari nama file; arti persis byte `RESERVE=` belum dikonfirmasi.
+- Counter tidak bisa dibaca kembali, jadi hasil reset tidak diverifikasi otomatis.
+- Tidak mencakup G1010, G1020, iP2770, iP1980, iX6870: perintahnya belum terbukti sama untuk model itu.
+- `eepromclear` (`CNTCLR_AL`) dan `WasteInkExceptClear` (`CNTCLR_P1`) sengaja tidak dipakai: yang pertama menghapus
+  seluruh counter, yang kedua artinya ambigu.
 
 ## Batasan
 

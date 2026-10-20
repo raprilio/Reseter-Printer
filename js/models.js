@@ -57,6 +57,7 @@ export const MODELS = [
   // Canon, tambahan umum
   canon('G1000'), canon('G2000'), canon('G2010'), canon('G2020'),
   canon('G3000'), canon('G3010'), canon('G3020'), canon('G4010'),
+  canon('iP1100'), canon('iP1800'), canon('iP2500'),
   canon('iP2700'), canon('iP2772'), canon('iP2870'), canon('iP1880'), canon('iX6770'),
 ];
 
