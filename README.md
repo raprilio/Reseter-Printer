@@ -3,6 +3,8 @@
 Utilitas web (tanpa instalasi) untuk printer **Epson** dan **Canon** lewat **WebUSB**: info printer,
 status tinta, cek head, pembersihan head, serta cek/reset counter absorber dan ink charge lewat profil model.
 
+Cara pakai: **1** pilih printer dari daftar, **2** hubungkan USB (atau coba mode demo), **3** jalankan perintah dari daftar.
+
 Jalankan lokal: `npm run serve` lalu buka `http://localhost:8080` (WebUSB mengizinkan `localhost`).
 Tes: `npm test`. Tidak ada dependensi dan tidak ada langkah build.
 
@@ -24,17 +26,33 @@ Tes: `npm test`. Tidak ada dependensi dan tidak ada langkah build.
   karena tidak ada sumber yang bisa diverifikasi (lihat [profiles/README.md](profiles/README.md)).
   Tanpa profil, tombol dinonaktifkan. Mode demo memperlihatkan alur lengkapnya dengan printer simulasi.
 
-### Profil bawaan Canon iP1100 / iP1800 / iP2500
+### Perintah bawaan Canon iP1100 / iP1800 / iP2500
 
-Berasal dari file `MainRewrite` dan `PlatenRewrite` di paket Canon General Tool (T3164) yang Anda sediakan:
-perintah BJL teks biasa (`ESC [ K ... BJLSTART ... BJLEND`). Batasannya:
+Berasal dari paket Canon General Tool (T3164) yang Anda sediakan (perintah BJL teks, byte disalin persis dari file).
+Tampil sebagai daftar di langkah 3:
 
-- **Belum diuji pada printer nyata**, jadi bertanda `verified: false` dan dialognya mewajibkan centang pengakuan.
-- Nama operasi diambil dari nama file; arti persis byte `RESERVE=` belum dikonfirmasi.
-- Counter tidak bisa dibaca kembali, jadi hasil reset tidak diverifikasi otomatis.
+| Perintah di aplikasi | File sumber | Catatan |
+| --- | --- | --- |
+| Reset absorber (Main + Platen) | `MainRewrite` + `PlatenRewrite` | Catatan versi tool (Ver1.10) menyatakan keduanya fungsi *clear counter tinta buang* |
+| Reset counter Main saja / Platen saja | `MainRewrite` / `PlatenRewrite` | |
+| Hapus counter lain (selain tinta buang) | `WasteInkExceptClear` (`CNTCLR_P1`) | Arti persis belum dikonfirmasi; ditandai bahaya |
+| Hapus SEMUA counter (EEPROM clear) | `eepromclear` (`CNTCLR_AL`) | Menghapus seluruh counter, bukan hanya tinta buang; ditandai bahaya |
+| Pembersihan head tipe A, B, C, D | `cleaninga` ... `cleaningd` | Perintah sama, parameter 0 sampai 3; arti varian belum dikonfirmasi |
+
+Sengaja **tidak** dimasukkan dari paket itu (dijaga oleh tes):
+
+- `capwipping`, `heatrun`: uji ketahanan pabrik, puluhan ribu siklus, mengausi mekanik.
+- `setregistration`: menulis kode model/identitas printer.
+- `Initialize_*.prn`: menulis kode tujuan/region.
+- `EEPROMData*.prn`: templat cetak statis, bukan pembacaan EEPROM (hasilnya angka kosong yang menyesatkan).
+- `PATTERN.prn`, `HEAD_PATT_BLK_CLR.prn`: diawali `@REGIGUIDEFRESET` (menghapus alignment head) dan khusus satu model.
+
+Batasan:
+
+- **Belum diuji pada printer nyata**: bertanda `verified: false`, dan dialog mewajibkan centang pengakuan.
+- Counter tidak bisa dibaca kembali dengan profil ini, jadi hasil reset tidak diverifikasi otomatis.
 - Tidak mencakup G1010, G1020, iP2770, iP1980, iX6870: perintahnya belum terbukti sama untuk model itu.
-- `eepromclear` (`CNTCLR_AL`) dan `WasteInkExceptClear` (`CNTCLR_P1`) sengaja tidak dipakai: yang pertama menghapus
-  seluruh counter, yang kedua artinya ambigu.
+  Pada model tersebut aplikasi hanya menampilkan info/status, dan perintah lain muncul di bagian "Belum tersedia".
 
 ## Batasan
 
@@ -57,6 +75,8 @@ index.html, css/style.css
 js/usb.js        transport WebUSB
 js/ieee1284.js   parser Device ID
 js/models.js     database model + ketersediaan fitur
+js/operations.js daftar perintah per model (standar + dari profil)
+js/builtin-profiles.js  profil bawaan Canon iP1100/1800/2500
 js/epson.js      perintah REMOTE1 dan parser respons
 js/profiles.js   validasi dan eksekutor profil
 js/demo.js       printer simulasi

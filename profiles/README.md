@@ -41,6 +41,8 @@ merusak printer, jadi hanya satu profil yang dibawa aplikasi: Canon iP1100/1800/
 | `steps[].delayMs` | Jeda setelah step |
 | `counters[]` | Cara membaca angka dari balasan step `rx` terakhir: `offset`, `length` (1-4 byte), `endian` (`le`/`be`), `max` (nilai saat dianggap penuh) |
 | `message` | Teks tambahan di dialog konfirmasi |
+| `label`, `desc`, `group` | Nama, penjelasan, dan grup di daftar perintah. Id selain 7 perintah standar tampil sebagai perintah tambahan (grup bawaan: `Lainnya`) |
+| `mutating`, `danger`, `ack` | Perintah yang mengubah printer (dialog konfirmasi), bertanda bahaya (tombol merah), dan teks centang pengakuan |
 
 Profil di `ops` selalu menimpa perintah bawaan untuk fitur yang sama. Dialog konfirmasi menampilkan
 byte persisnya sebelum dikirim, dan **Mode uji (dry-run)** menampilkan byte tanpa mengirim.

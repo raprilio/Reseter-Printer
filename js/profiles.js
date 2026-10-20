@@ -24,6 +24,7 @@ export function validateProfile(p) {
   if (!Array.isArray(p.models) || !p.models.length) err('models kosong');
   if (!p.ops || typeof p.ops !== 'object') err('ops kosong');
   for (const [name, op] of Object.entries(p.ops)) {
+    if (!/^[A-Za-z][A-Za-z0-9_]{0,40}$/.test(name)) err(`id perintah "${name}" harus huruf/angka/underscore`);
     if (!Array.isArray(op.steps) || !op.steps.length) err(`${name}: steps kosong`);
     for (const s of op.steps) hexToBytes(s.tx); // melempar jika hex salah
     for (const c of op.counters || []) {

@@ -97,6 +97,8 @@ test('Profil: validasi menolak data rusak', () => {
     () => loadProfile({ ...base, ops: { a: { steps: [{ tx: '01' }], counters: [{ length: 2, max: 0 }] } } }),
     /max/,
   );
+  assert.throws(() => loadProfile({ ...base, ops: { 'a b': { steps: [{ tx: '1B 40' }] } } }), /id perintah/);
+  assert.throws(() => loadProfile({ ...base, ops: { '1x': { steps: [{ tx: '1B 40' }] } } }), /id perintah/);
   assert.ok(loadProfile({ ...base, ops: { a: { steps: [{ tx: '1B 40' }] } } }));
 });
 
