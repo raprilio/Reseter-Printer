@@ -21,6 +21,7 @@ localhost** — mis. GitHub Pages dengan folder `web/`. Klik **Mode Demo** untuk
 | Status tinta (`IQ`) | ⚠️ belum diuji di printer | ❌ belum ada |
 | Cek nozzle / head cleaning | ⚠️ belum diuji di printer | ❌ pakai driver/tombol panel |
 | Cek absorber, reset waste counter, ink charge | 🔌 butuh profil model | 🔌 butuh profil model |
+| Cek absorber Canon G1010/G1020 (lampu/pesan error, tanpa USB) | — | ✅ panduan |
 | Console hex mentah | ✅ | ✅ |
 
 - ⚠️ = berdasar perintah remote Epson yang terdokumentasi di utilitas terbuka; tidak ada perangkat keras di

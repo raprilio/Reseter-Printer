@@ -4,6 +4,7 @@ import { parseDeviceId, decodeDeviceIdResponse } from '../web/js/deviceid.js';
 import { findModel } from '../web/js/models.js';
 import { buildRemote, remoteCmd, parseInkQuantity, readInkLevels } from '../web/js/epson.js';
 import { parseData, validateProfile, runSteps, evalCounters, profileMatches } from '../web/js/profile.js';
+import { evaluateAbsorber } from '../web/js/canon.js';
 import { DemoTransport, DEMO_PROFILE } from '../web/js/demo.js';
 
 test('parse device id epson & canon', () => {
@@ -65,4 +66,13 @@ test('example profile is valid schema', async () => {
   const { readFile } = await import('node:fs/promises');
   const p = JSON.parse(await readFile(new URL('../profiles/example.json', import.meta.url)));
   assert.deepEqual(validateProfile(p), []);
+});
+
+test('canon absorber evaluation', () => {
+  assert.equal(evaluateAbsorber({ lamp: 'none', pc: '5B00' }).level, 'full');
+  assert.equal(evaluateAbsorber({ lamp: '8', pc: 'none' }).level, 'near');
+  assert.equal(evaluateAbsorber({ lamp: 'none', pc: 'E08' }).level, 'near');
+  assert.equal(evaluateAbsorber({ lamp: 'other', pc: 'none' }).level, 'other');
+  assert.equal(evaluateAbsorber({ lamp: 'none', pc: 'none' }).level, 'unknown');
+  assert.equal(evaluateAbsorber({ lamp: '8', pc: '5B00' }).level, 'full');
 });

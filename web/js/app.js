@@ -3,6 +3,7 @@ import { parseDeviceId } from './deviceid.js';
 import { WebUsbTransport } from './transport.js';
 import { DemoTransport, DEMO_PROFILE } from './demo.js';
 import * as epson from './epson.js';
+import { evaluateAbsorber, ABSORBER_MODELS } from './canon.js';
 import { validateProfile, profileMatches, runSteps, evalCounters, toHex, parseData } from './profile.js';
 
 const $ = (id) => document.getElementById(id);
@@ -161,6 +162,7 @@ async function afterOpen(t) {
     })
   );
   for (const li of $('modelList').children) li.classList.toggle('active', li.dataset.model === state.model?.model);
+  if (ABSORBER_MODELS.includes(state.model?.model)) $('absModel').value = state.model.model;
   if (state.dev.brand === 'unknown') banner('Merek tidak dikenali sebagai Epson/Canon. Fitur otomatis dinonaktifkan.');
   else banner(t.kind === 'demo' ? 'Mode demo: semua data simulasi, tidak ada printer yang disentuh.' : '');
   refreshButtons();
@@ -326,6 +328,15 @@ function renderGuide() {
   $('guide').replaceChildren(table('Canon', CANON_ERRORS), table('Epson', EPSON_ERRORS));
 }
 
+function renderAbsorber() {
+  const r = evaluateAbsorber({ lamp: $('absLamp').value, pc: $('absPc').value });
+  const v = $('absVerdict');
+  v.hidden = false;
+  v.className = `verdict ${{ full: 'full', near: 'near', other: 'other', unknown: 'good' }[r.level]}`;
+  v.textContent = r.title;
+  $('absSteps').replaceChildren(...r.steps.map((t) => Object.assign(document.createElement('li'), { textContent: t })));
+}
+
 // ---------- wire up ----------
 $('btnConnect').onclick = connectUsb;
 $('btnDemo').onclick = () => guarded('Memulai mode demo', () => afterOpen(new DemoTransport()));
@@ -340,9 +351,11 @@ $('btnRaw').onclick = () => guarded('Kirim hex mentah', rawSend);
 $('btnClearLog').onclick = () => $('log').replaceChildren();
 $('btnClearProfiles').onclick = () => { store.set([]); log('inf', 'Profil tersimpan dihapus.'); if (state.dev) { state.profile = pickProfile(); refreshButtons(); } };
 $('fileProfile').onchange = (e) => e.target.files[0] && importProfile(e.target.files[0]);
+$('absLamp').onchange = $('absPc').onchange = renderAbsorber;
 $('modelSearch').oninput = $('modelBrand').onchange = renderModels;
 $('dlgInput').oninput = () => { $('dlgOk').disabled = $('dlgInput').value.trim().toUpperCase() !== $('dlgWord').textContent; };
 
 renderModels();
 renderGuide();
+renderAbsorber();
 refreshButtons();

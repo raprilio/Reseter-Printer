@@ -59,6 +59,33 @@
       <p class="hint" id="headHint">Epson: dikirim lewat remote command. Canon: gunakan menu Maintenance di driver atau tombol panel.</p>
     </section>
 
+    <section class="card" id="cardCanonAbs">
+      <h2>Cek absorber Canon <small>G1010 / G1020</small></h2>
+      <div class="form">
+        <label>Model
+          <select id="absModel"><option>G1010</option><option>G1020</option></select>
+        </label>
+        <label>Lampu Alarm (oranye)
+          <select id="absLamp">
+            <option value="none">Tidak berkedip</option>
+            <option value="8">Berkedip 8 kali</option>
+            <option value="other">Berkedip jumlah lain</option>
+          </select>
+        </label>
+        <label>Pesan di komputer / Status Monitor
+          <select id="absPc">
+            <option value="none">Tidak ada pesan</option>
+            <option value="5B00">5B00 / ink absorber full</option>
+            <option value="E08">E08 / ink absorber hampir penuh</option>
+            <option value="other">Pesan lain</option>
+          </select>
+        </label>
+      </div>
+      <div id="absVerdict" class="verdict" hidden></div>
+      <ul id="absSteps" class="steps"></ul>
+      <p class="hint">Bekerja tanpa koneksi USB. Peringatan baru muncul setelah ambang counter terlewati, jadi ini bukan pengganti angka counter dari profil model.</p>
+    </section>
+
     <section class="card" id="cardProfile">
       <h2>Profil model</h2>
       <p id="profileState" class="hint">Tidak ada profil aktif.</p>
